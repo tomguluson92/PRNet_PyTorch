@@ -2,7 +2,7 @@
 
 ![Github](https://img.shields.io/badge/PyTorch-v1.1.0-green.svg?style=for-the-badge&logo=data:image/png)
 ![Github](https://img.shields.io/badge/python-3.6-green.svg?style=for-the-badge&logo=python)
-![Github](https://img.shields.io/badge/license-MIT--NC-green.svg?style=for-the-badge&logo=fire)
+![Github](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge&logo=fire)
 
 <p align="center"> 
 <img src="docs/image/prnet.gif">
