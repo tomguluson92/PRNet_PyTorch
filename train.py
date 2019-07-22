@@ -8,6 +8,7 @@
 import os
 import cv2
 import random
+from PIL import Image
 from tqdm import tqdm
 
 import torch
@@ -109,8 +110,8 @@ def main(data_dir):
                 origin_img, uv_map_gt = origin, uv_map
             uv_map_predicted = uv_map_result
 
-            writer.add_scalar("Loss", Loss_list[-1], FLAGS["summary_step"])
-            writer.add_scalar("SSIM", Stat_list[-1], FLAGS["summary_step"])
+            writer.add_scalar("Original Loss", Loss_list[-1], FLAGS["summary_step"])
+            writer.add_scalar("SSIM Loss", Stat_list[-1], FLAGS["summary_step"])
 
             grid_1, grid_2, grid_3 = make_grid(origin_img), make_grid(uv_map_gt), make_grid(uv_map_predicted)
             writer.add_image('original', grid_1, FLAGS["summary_step"])
@@ -120,8 +121,8 @@ def main(data_dir):
 
         if ep % FLAGS["save_interval"] == 0:
             with torch.no_grad():
-                origin = cv2.imread("./test_data/obama_origin.jpg")
-                gt_uv_map = cv2.imread("./test_data/obama_uv_posmap.jpg")
+                origin = Image.open("./test_data/obama_origin.jpg").convert("RGB")
+                gt_uv_map = Image.open("./test_data/obama_uv_posmap.jpg").convert("RGB")
                 origin, gt_uv_map = test_data_preprocess(origin), test_data_preprocess(gt_uv_map)
 
                 pred_uv_map = model(origin).detach().cpu()
@@ -147,6 +148,5 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--train_dir", help="specify input directory.")
     args = parser.parse_args()
-    # main("/home/samuel/gaodaiheng/3DFace/dataset/300WLP")
-    main("/home/samuel/gaodaiheng/3DFace/dataset/300WLP_TEST")
+    # main("./dataset/300WLP_TEST")
     main(args.train_dir)

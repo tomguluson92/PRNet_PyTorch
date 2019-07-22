@@ -149,7 +149,6 @@ def save_networks(epoch, net, save_dir='models'):
     """
         @date: 2019.05.15
         @author: samuel ko
-        @func: 保存模型.
 
     Parameters:
         epoch (int) -- current epoch; used in the file name '%s_net_%s.pth' % (epoch, name)
@@ -160,6 +159,7 @@ def save_networks(epoch, net, save_dir='models'):
 
 
 def test_data_preprocess(img):
+    img = np.array(img)
     img = img.transpose((2, 0, 1))
     img = img.astype("float32") / 255.
     img = torch.from_numpy(img)
