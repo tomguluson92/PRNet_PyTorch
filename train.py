@@ -33,18 +33,18 @@ torch.manual_seed(manualSeed)
 FLAGS = {"start_epoch": 0,
          "target_epoch": 100,
          "device": "cuda",
-         "mask_path": "/home/samuel/gaodaiheng/3DFace/code/PRNet_Samuel/utils/uv_data/uv_weight_mask_gdh.png",
+         "mask_path": "./utils/uv_data/uv_weight_mask_gdh.png",
          "lr": 0.0001,
          "batch_size": 16,
          "save_interval": 1,
-         "images": "/home/samuel/gaodaiheng/3DFace/code/PRNet_Samuel/results",
+         "images": "./results",
          "gauss_kernel": "fspecial",
          "summary_path": "./prnet_runs/",
          "summary_step": 0,
          "resume": True}
 
 
-def main(data_dir="/home/samuel/gaodaiheng/3DFace/dataset/300WLP"):
+def main(data_dir):
     # 0) Tensoboard Writer.
     writer = SummaryWriter(FLAGS['summary_path'])
     origin_img, uv_map_gt, uv_map_predicted = None, None, None
@@ -120,8 +120,8 @@ def main(data_dir="/home/samuel/gaodaiheng/3DFace/dataset/300WLP"):
 
         if ep % FLAGS["save_interval"] == 0:
             with torch.no_grad():
-                origin = cv2.imread("/home/samuel/gaodaiheng/3DFace/code/PRNet_Samuel/test_data/obama_origin.jpg")
-                gt_uv_map = cv2.imread("/home/samuel/gaodaiheng/3DFace/code/PRNet_Samuel/test_data/obama_uv_posmap.jpg")
+                origin = cv2.imread("./test_data/obama_origin.jpg")
+                gt_uv_map = cv2.imread("./test_data/obama_uv_posmap.jpg")
                 origin, gt_uv_map = test_data_preprocess(origin), test_data_preprocess(gt_uv_map)
 
                 pred_uv_map = model(origin).detach().cpu()
