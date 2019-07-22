@@ -28,7 +28,7 @@ Batch processing.
 
 You can use `utils/generate_posmap_300WLP.py` as:
 
-``` python
+``` shell
 python3 generate_posmap_300WLP.py --input_dir ./dataset/300WLP/IBUG/ --save_dir ./300WLP_IBUG/
 ```
 
@@ -57,7 +57,7 @@ python3 train.py --train_dir ./300WLP_IBUG
 ```
 
 You can use tensorboard to visualize the intermediate output in `localhost:6006`:
-```python
+```shell
 tensorboard --logdir=absolute_path_of_prnet_runs/
 ```
 
