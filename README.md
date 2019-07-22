@@ -15,13 +15,14 @@ of [`300WLP`](http://www.cbsr.ia.ac.cn/users/xiangyuzhu/projects/3DDFA/main.htm)
 
 If you use this code, please consider citing:
 
->@inProceedings{feng2018prn,
+```
+@inProceedings{feng2018prn,
   title     = {Joint 3D Face Reconstruction and Dense Alignment with Position Map Regression Network},
   author    = {Yao Feng and Fan Wu and Xiaohu Shao and Yanfeng Wang and Xi Zhou},
   booktitle = {ECCV},
   year      = {2018}
 }
-
+```
 
 ----
 ## ① Pre-Requirements 
