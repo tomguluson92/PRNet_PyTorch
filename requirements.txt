@@ -1,0 +1,12 @@
+numpy
+tqdm
+future
+opencv-python
+scikit-image
+protobuf
+tensorboard==1.14.0
+Pillow==6.1.0
+tb-nightly
+torchvision
+torch==1.1.0
+torchvision>=0.2.1
