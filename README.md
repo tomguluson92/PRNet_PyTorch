@@ -51,7 +51,7 @@ I provide processed *original--uv_posmap* pair of IBUG [here](https://drive.goog
 ## ③ Training
 After finish the above two step, you can train your own PRNet as:
 
-``` python
+``` shell
 
 python3 train.py --train_dir ./300WLP_IBUG
 ```
