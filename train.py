@@ -8,6 +8,7 @@
 import os
 import cv2
 import random
+import numpy as np
 from PIL import Image
 from tqdm import tqdm
 
@@ -15,7 +16,7 @@ import torch
 import torch.optim
 from model.resfcn256 import ResFCN256
 
-from tools.WLP300dataset import PRNetDataset, ToTensor, ToNormalize, ColorJitter
+from tools.WLP300dataset import PRNetDataset, ToTensor, ToNormalize
 from tools.prnet_loss import WeightMaskLoss, INFO
 
 from utils.utils import save_image, test_data_preprocess, make_all_grids, make_grid
@@ -24,6 +25,7 @@ from utils.losses import SSIM
 from torch.utils.tensorboard import SummaryWriter
 from torchvision import transforms, utils, models
 from torch.utils.data import DataLoader
+import torchvision.transforms.functional as F
 
 # Set random seem for reproducibility
 manualSeed = 5
@@ -38,9 +40,11 @@ FLAGS = {"start_epoch": 0,
          "lr": 0.0001,
          "batch_size": 16,
          "save_interval": 1,
+         "normalize_mean": [0.485, 0.456, 0.406],
+         "normalize_std": [0.229, 0.224, 0.225],
          "images": "./results",
          "gauss_kernel": "fspecial",
-         "summary_path": "./prnet_runs/",
+         "summary_path": "./prnet_runs",
          "summary_step": 0,
          "resume": True}
 
@@ -52,8 +56,8 @@ def main(data_dir):
 
     # 1) Create Dataset of 300_WLP.
     wlp300 = PRNetDataset(root_dir=data_dir,
-                          transform=transforms.Compose([ColorJitter(brightness=0.5, contrast=0.2),
-                                                        ToTensor()]))
+                          transform=transforms.Compose([ToTensor(),
+                                                        ToNormalize(FLAGS["normalize_mean"], FLAGS["normalize_std"])]))
 
     # 2) Create DataLoader.
     wlp300_dataloader = DataLoader(dataset=wlp300, batch_size=FLAGS['batch_size'], shuffle=True, num_workers=4)
@@ -113,7 +117,8 @@ def main(data_dir):
             writer.add_scalar("Original Loss", Loss_list[-1], FLAGS["summary_step"])
             writer.add_scalar("SSIM Loss", Stat_list[-1], FLAGS["summary_step"])
 
-            grid_1, grid_2, grid_3 = make_grid(origin_img), make_grid(uv_map_gt), make_grid(uv_map_predicted)
+            grid_1, grid_2, grid_3 = make_grid(origin_img, normalize=True), make_grid(uv_map_gt), make_grid(uv_map_predicted)
+
             writer.add_image('original', grid_1, FLAGS["summary_step"])
             writer.add_image('gt_uv_map', grid_2, FLAGS["summary_step"])
             writer.add_image('predicted_uv_map', grid_3, FLAGS["summary_step"])
@@ -121,13 +126,14 @@ def main(data_dir):
 
         if ep % FLAGS["save_interval"] == 0:
             with torch.no_grad():
-                origin = Image.open("./test_data/obama_origin.jpg").convert("RGB")
-                gt_uv_map = Image.open("./test_data/obama_uv_posmap.jpg").convert("RGB")
+                origin = cv2.imread("./test_data/obama_origin.jpg")
+                gt_uv_map = cv2.imread("./test_data/obama_uv_posmap.jpg")
                 origin, gt_uv_map = test_data_preprocess(origin), test_data_preprocess(gt_uv_map)
 
-                pred_uv_map = model(origin).detach().cpu()
+                origin_in = F.normalize(origin, FLAGS["normalize_mean"], FLAGS["normalize_std"], False).unsqueeze_(0)
+                pred_uv_map = model(origin_in).detach().cpu()
 
-                save_image([origin.cpu(), gt_uv_map.cpu(), pred_uv_map],
+                save_image([origin.cpu(), gt_uv_map.unsqueeze_(0).cpu(), pred_uv_map],
                            os.path.join(FLAGS['images'], str(ep) + '.png'), nrow=1, normalize=True)
 
             # Save model
@@ -148,5 +154,4 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--train_dir", help="specify input directory.")
     args = parser.parse_args()
-    # main("./dataset/300WLP_TEST")
     main(args.train_dir)

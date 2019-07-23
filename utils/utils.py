@@ -9,6 +9,8 @@ import torch
 import math
 import cv2
 
+import torchvision.transforms.functional as F
+
 irange = range
 
 
@@ -89,15 +91,15 @@ def make_grid(tensor, nrow=8, padding=2,
         for x in irange(xmaps):
             if k >= nmaps:
                 break
-            grid.narrow(1, y * height + padding, height - padding)\
-                .narrow(2, x * width + padding, width - padding)\
+            grid.narrow(1, y * height + padding, height - padding) \
+                .narrow(2, x * width + padding, width - padding) \
                 .copy_(tensor[k])
             k = k + 1
     return grid
 
 
 def make_all_grids(tensors, nrow=8, padding=2,
-               normalize=False, range=None, scale_each=False, pad_value=0):
+                   normalize=False, range=None, scale_each=False, pad_value=0):
     """Save a given Tensor into an image file.
 
     Args:
@@ -115,7 +117,8 @@ def make_all_grids(tensors, nrow=8, padding=2,
         if ndarr is None:
             ndarr = grid.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).to('cpu', torch.uint8).numpy()
         else:
-            ndarr = np.hstack((ndarr, grid.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).to('cpu', torch.uint8).numpy()))
+            ndarr = np.hstack(
+                (ndarr, grid.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).to('cpu', torch.uint8).numpy()))
 
     return ndarr
 
@@ -139,7 +142,8 @@ def save_image(tensors, filename, nrow=8, padding=2,
         if ndarr is None:
             ndarr = grid.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).to('cpu', torch.uint8).numpy()
         else:
-            ndarr = np.hstack((ndarr, grid.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).to('cpu', torch.uint8).numpy()))
+            ndarr = np.hstack(
+                (ndarr, grid.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).to('cpu', torch.uint8).numpy()))
 
     # return ndarr
     cv2.imwrite(filename, ndarr)
@@ -159,8 +163,9 @@ def save_networks(epoch, net, save_dir='models'):
 
 
 def test_data_preprocess(img):
-    img = np.array(img)
+
     img = img.transpose((2, 0, 1))
     img = img.astype("float32") / 255.
     img = torch.from_numpy(img)
-    return img.to("cuda").unsqueeze_(0)
+
+    return img.to("cuda")
