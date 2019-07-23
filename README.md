@@ -24,6 +24,27 @@ If you use this code, please consider citing:
 }
 ```
 
+### Noitce
+
+As we adopt replace the default `PIL.Imgae` by `cv2.imread` in image reader, you need
+do a little revise on your tensorboard packages in `your_python_path/site-packages/torch/utils/tensorboard/summary.py`
+
+What you should do is add `tensor = tensor[:, :, ::-1]` before `image = Image.fromarray(tensor)` in function `make_image(...)`.
+```shell
+...
+def make_image(tensor, rescale=1, rois=None):
+    """Convert an numpy representation image to Image protobuf"""
+    from PIL import Image
+    height, width, channel = tensor.shape
+    scaled_height = int(height * rescale)
+    scaled_width = int(width * rescale)
+
+    tensor = tensor[:, :, ::-1]
+    image = Image.fromarray(tensor)
+    ...
+...
+``` 
+
 ----
 ## ① Pre-Requirements 
 
