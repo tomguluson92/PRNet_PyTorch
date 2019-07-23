@@ -26,8 +26,8 @@ If you use this code, please consider citing:
 
 ### Noitce
 
-As we adopt replace the default `PIL.Imgae` by `cv2.imread` in image reader, you need
-do a little revise on your tensorboard packages in `your_python_path/site-packages/torch/utils/tensorboard/summary.py`
+Since replacing the default `PIL.Imgae` by `cv2.imread` in image reader, you need
+do a little revise on your `tensorboard` package in `your_python_path/site-packages/torch/utils/tensorboard/summary.py`
 
 What you should do is add `tensor = tensor[:, :, ::-1]` before `image = Image.fromarray(tensor)` in function `make_image(...)`.
 ```shell
