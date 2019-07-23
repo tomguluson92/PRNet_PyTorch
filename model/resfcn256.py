@@ -45,8 +45,9 @@ class ResBlock(nn.Module):
 
     def forward(self, x):
         shortcut = x
+        (_, _, _, x_planes) = x.size()
 
-        if self.stride != 1 or x.size(3) != self.out_planes:
+        if self.stride != 1 or x_planes != self.out_planes:
             shortcut = self.shortcut_conv(x)
 
         x = self.conv1(x)

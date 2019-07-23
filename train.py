@@ -43,7 +43,7 @@ FLAGS = {"start_epoch": 0,
          "normalize_mean": [0.485, 0.456, 0.406],
          "normalize_std": [0.229, 0.224, 0.225],
          "images": "./results",
-         "gauss_kernel": "fspecial",
+         "gauss_kernel": "original",
          "summary_path": "./prnet_runs",
          "summary_step": 0,
          "resume": True}
@@ -83,7 +83,7 @@ def main(data_dir):
     optimizer = torch.optim.Adam(model.parameters(), lr=FLAGS["lr"], betas=(0.5, 0.999))
     scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.99)
 
-    stat_loss = SSIM(gauss=FLAGS["gauss_kernel"])
+    stat_loss = SSIM(mask_path=FLAGS["mask_path"], gauss=FLAGS["gauss_kernel"])
     loss = WeightMaskLoss(mask_path=FLAGS["mask_path"])
 
     for ep in range(start_epoch, target_epoch):
@@ -107,7 +107,7 @@ def main(data_dir):
             optimizer.zero_grad()
             logit.backward()
             optimizer.step()
-            bar.set_description(" {} [Loss(Paper)] {} [SSIM(fspecial)] {}".format(ep, Loss_list[-1], Stat_list[-1]))
+            bar.set_description(" {} [Loss(Paper)] {} [SSIM({})] {}".format(ep, Loss_list[-1], FLAGS["gauss_kernel"], Stat_list[-1]))
 
             # Record Training information in Tensorboard.
             if origin_img is None and uv_map_gt is None:

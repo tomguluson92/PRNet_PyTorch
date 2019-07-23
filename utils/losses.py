@@ -4,13 +4,16 @@
     @date: 2019.05.03
     @func: style loss(ssim and its multiple variants.)
 """
-
+import os
+import cv2
 import torch
 from torch.autograd import Variable
 import torch.nn.functional as F
 from torch.nn import Conv2d
 from math import exp
 import numpy as np
+
+from tools.prnet_loss import preprocess
 
 
 def tile(a, dim, n_tile):
@@ -131,11 +134,12 @@ class ORIGINAL_SSIM(torch.nn.Module):
         return 1 - _ssim(img1, img2, self.window_size, window, self.val_range, self.size_average)
 
 
-def dfl_ssim(img1, img2, window_size=11, val_range=1, gauss='original'):
+def dfl_ssim(img1, img2, mask, window_size=11, val_range=1, gauss='original'):
     # Value range can be different from 255. Other common ranges are 1 (sigmoid) and 2 (tanh).
     # padd = window_size//2
     padd = 0
     (batch, channel, height, width) = img1.size()
+    img1, img2 = torch.mul(img1, mask), torch.mul(img2, mask)
 
     real_size = min(window_size, height, width)
     window = create_window(real_size, gauss=gauss).to(img1.device)
@@ -165,7 +169,7 @@ def dfl_ssim(img1, img2, window_size=11, val_range=1, gauss='original'):
 # Classes to re-use window
 class SSIM(torch.nn.Module):
 
-    def __init__(self, window_size=11, alpha=0.8, gauss='original'):
+    def __init__(self, mask_path, window_size=11, alpha=0.8, gauss='original'):
         super(SSIM, self).__init__()
 
         self.window_size = window_size
@@ -175,7 +179,13 @@ class SSIM(torch.nn.Module):
         self.gauss = gauss
         self.alpha = alpha
 
+        if os.path.exists(mask_path):
+            self.mask = cv2.imread(mask_path, 0)
+            self.mask = torch.from_numpy(preprocess(self.mask)).float().to("cuda")
+        else:
+            raise FileNotFoundError("Mask File Not Found! Please Check your Settings!")
+
     def forward(self, img1, img2):
         (_, channel, _, _) = img1.size()
         self.channel = channel
-        return 10 * dfl_ssim(img1, img2, window_size=self.window_size, gauss=self.gauss)
+        return 10 * dfl_ssim(img1, img2, mask=self.mask, window_size=self.window_size, gauss=self.gauss)
