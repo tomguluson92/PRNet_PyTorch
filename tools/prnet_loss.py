@@ -39,7 +39,6 @@ def preprocess(mask):
 class WeightMaskLoss(nn.Module):
     """
         L2_Loss * Weight Mask
-        TODO: 1) 调整Loss的设计.
     """
 
     def __init__(self, mask_path):
