@@ -19,6 +19,8 @@ from model.resfcn256 import ResFCN256
 from tools.WLP300dataset import PRNetDataset, ToTensor, ToNormalize
 from tools.prnet_loss import WeightMaskLoss, INFO
 
+from config.config import FLAGS
+
 from utils.utils import save_image, test_data_preprocess, make_all_grids, make_grid
 from utils.losses import SSIM
 
@@ -33,34 +35,27 @@ INFO("Random Seed", manualSeed)
 random.seed(manualSeed)
 torch.manual_seed(manualSeed)
 
-FLAGS = {"start_epoch": 0,
-         "target_epoch": 100,
-         "device": "cuda",
-         "mask_path": "./utils/uv_data/uv_weight_mask_gdh.png",
-         "lr": 0.0001,
-         "batch_size": 16,
-         "save_interval": 1,
-         "normalize_mean": [0.485, 0.456, 0.406],
-         "normalize_std": [0.229, 0.224, 0.225],
-         "images": "./results",
-         "gauss_kernel": "original",
-         "summary_path": "./prnet_runs",
-         "summary_step": 0,
-         "resume": True}
-
 
 def main(data_dir):
     # 0) Tensoboard Writer.
     writer = SummaryWriter(FLAGS['summary_path'])
     origin_img, uv_map_gt, uv_map_predicted = None, None, None
 
-    # 1) Create Dataset of 300_WLP.
+    if not os.path.exists(FLAGS['images']):
+        os.mkdir(FLAGS['images'])
+
+    # 1) Create Dataset of 300_WLP & Dataloader.
     wlp300 = PRNetDataset(root_dir=data_dir,
                           transform=transforms.Compose([ToTensor(),
                                                         ToNormalize(FLAGS["normalize_mean"], FLAGS["normalize_std"])]))
 
-    # 2) Create DataLoader.
     wlp300_dataloader = DataLoader(dataset=wlp300, batch_size=FLAGS['batch_size'], shuffle=True, num_workers=4)
+
+    # 2) Intermediate Processing.
+    transform_img = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(FLAGS["normalize_mean"], FLAGS["normalize_std"])
+    ])
 
     # 3) Create PRNet model.
     start_epoch, target_epoch = FLAGS['start_epoch'], FLAGS['target_epoch']
@@ -127,10 +122,12 @@ def main(data_dir):
         if ep % FLAGS["save_interval"] == 0:
             with torch.no_grad():
                 origin = cv2.imread("./test_data/obama_origin.jpg")
-                gt_uv_map = cv2.imread("./test_data/obama_uv_posmap.jpg")
+                gt_uv_map = np.load("./test_data/test_obama.npy")
                 origin, gt_uv_map = test_data_preprocess(origin), test_data_preprocess(gt_uv_map)
 
-                origin_in = F.normalize(origin, FLAGS["normalize_mean"], FLAGS["normalize_std"], False).unsqueeze_(0)
+                origin, gt_uv_map = transform_img(origin), transform_img(gt_uv_map)
+
+                origin_in = origin.unsqueeze_(0).cuda()
                 pred_uv_map = model(origin_in).detach().cpu()
 
                 save_image([origin.cpu(), gt_uv_map.unsqueeze_(0).cpu(), pred_uv_map],
@@ -142,7 +139,7 @@ def main(data_dir):
                 'Loss': Loss_list,
                 'start_epoch': ep,
             }
-            torch.save(state, os.path.join('results', 'latest.pth'))
+            torch.save(state, os.path.join(FLAGS['images'], 'latest.pth'))
 
             scheduler.step()
 

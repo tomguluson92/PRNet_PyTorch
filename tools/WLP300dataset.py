@@ -11,6 +11,7 @@ from torchvision import transforms
 import torchvision.transforms.functional as F
 
 import cv2
+from glob import glob
 import random
 import numbers
 import numpy as np
@@ -51,7 +52,9 @@ class PRNetDataset(Dataset):
         img_id = self.dict.get(img_id)
         if img_id:
             original = os.path.join(self.root_dir, str(img_id), 'original.jpg')
-            uv_map = os.path.join(self.root_dir, str(img_id), 'uv_posmap.jpg')
+            # fixme: Thanks to mj, who fix an important bug!
+            uv_map_path = glob(os.path.join(self.root_dir, str(img_id), "*.npy"))
+            uv_map = uv_map_path[0]
 
             return original, uv_map
 
@@ -68,7 +71,7 @@ class PRNetDataset(Dataset):
         original, uv_map = self.get_img_path(idx)
 
         origin = cv2.imread(original)
-        uv_map = cv2.imread(uv_map)
+        uv_map = np.load(uv_map)
 
         sample = {'uv_map': uv_map, 'origin': origin}
         if self.transform:

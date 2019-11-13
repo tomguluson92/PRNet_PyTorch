@@ -11,18 +11,15 @@
 This is an unofficial pytorch implementation of **PRNet** since there is not a complete generating and training code
 of [`300WLP`](http://www.cbsr.ia.ac.cn/users/xiangyuzhu/projects/3DDFA/main.htm) dataset.
 
-### Citation
+-------
+### Update Log 
 
-If you use this code, please consider citing:
+**@date**: 2019.11.13
 
-```
-@inProceedings{feng2018prn,
-  title     = {Joint 3D Face Reconstruction and Dense Alignment with Position Map Regression Network},
-  author    = {Yao Feng and Fan Wu and Xiaohu Shao and Yanfeng Wang and Xi Zhou},
-  booktitle = {ECCV},
-  year      = {2018}
-}
-```
+**@notice**: An important bug has been fixed by mj in loading uv map. The original `uv_map.jpg` is
+             flipped, so *.npy is used here to redress this problem.
+
+------
 
 ### Noitce
 
@@ -103,3 +100,19 @@ The following image is used to judge the effectiveness of PRNet to unknown data.
 ![Test Data](docs/image/test_img.png)
 
 ## ④ Inference(To be continued)
+
+
+
+--------
+### Citation
+
+If you use this code, please consider citing:
+
+```
+@inProceedings{feng2018prn,
+  title     = {Joint 3D Face Reconstruction and Dense Alignment with Position Map Regression Network},
+  author    = {Yao Feng and Fan Wu and Xiaohu Shao and Yanfeng Wang and Xi Zhou},
+  booktitle = {ECCV},
+  year      = {2018}
+}
+```
