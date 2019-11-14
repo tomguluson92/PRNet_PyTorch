@@ -43,7 +43,8 @@ def main(args):
     for files in types:
         image_path_list.extend(glob(os.path.join(image_folder, files)))
     total_num = len(image_path_list)
-    print("处理{}张图片".format(total_num))
+    print("#" * 25)
+    print("[PRNet Inference] {} picture were under processing~".format(total_num))
     print("#"*25)
 
     for i, image_path in enumerate(image_path_list):
@@ -142,8 +143,6 @@ if __name__ == '__main__':
                         help='set gpu id, -1 for CPU')
     parser.add_argument('--model', default='results/latest.pth', type=str,
                         help='model path')
-    parser.add_argument('--isDlib', default=True, type=ast.literal_eval,
-                        help='whether to use dlib for detecting face, default is True, if False, the input image should be cropped in advance')
     parser.add_argument('--is3d', default=True, type=ast.literal_eval,
                         help='whether to output 3D face(.obj). default save colors.')
     parser.add_argument('--isMat', default=False, type=ast.literal_eval,
