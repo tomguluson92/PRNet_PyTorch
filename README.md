@@ -19,6 +19,10 @@ of [`300WLP`](http://www.cbsr.ia.ac.cn/users/xiangyuzhu/projects/3DDFA/main.htm)
 **@notice**: An important bug has been fixed by mj in loading uv map. The original `uv_map.jpg` is
              flipped, so *.npy is used here to redress this problem.
 
+**@date**: 2019.11.14
+
+**@notice**: Inference Stage Uploaded. Thanks to MJ!
+
 ------
 
 ### Noitce
@@ -99,8 +103,13 @@ The following image is used to judge the effectiveness of PRNet to unknown data.
 (Original, UV_MAP_gt, UV_MAP_predicted)
 ![Test Data](docs/image/test_img.png)
 
-## ④ Inference(To be continued)
+## ④ Inference
 
+You can use following instruction to do your prnet inference. The detail about parameters you can find in `inference.py`.
+```shell
+python3 inference -i input_dir(default is TestImages) -o output_dir(default is TestImages/results) --model model_path(default is results/latest.pth)
+```
+![Test Data](docs/image/inference_img.png)
 
 
 --------
