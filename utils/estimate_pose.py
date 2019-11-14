@@ -93,7 +93,7 @@ def compute_similarity_transform(points_static, points_to_transform):
 
 
 def estimate_pose(vertices):
-    canonical_vertices = np.load('Data/uv-data/canonical_vertices.npy')
+    canonical_vertices = np.load('utils/uv_data/canonical_vertices.npy')
     P = compute_similarity_transform(vertices, canonical_vertices)
     _, R, _ = P2sRt(P)  # decompose affine matrix to s, R, t
     pose = matrix2angle(R)
