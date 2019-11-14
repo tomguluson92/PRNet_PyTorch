@@ -11,17 +11,19 @@
 This is an unofficial pytorch implementation of **PRNet** since there is not a complete generating and training code
 of [`300WLP`](http://www.cbsr.ia.ac.cn/users/xiangyuzhu/projects/3DDFA/main.htm) dataset.
 
+- Author: Samuel Ko, mjanddy.
+
 -------
 ### Update Log 
 
 **@date**: 2019.11.13
 
 **@notice**: An important bug has been fixed by mj in loading uv map. The original `uv_map.jpg` is
-             flipped, so *.npy is used here to redress this problem.
+             flipped, so *.npy is used here to redress this problem. Thanks to [mjanddy](https://github.com/mjanddy)!
 
 **@date**: 2019.11.14
 
-**@notice**: Inference Stage Uploaded. Thanks to MJ!
+**@notice**: Inference Stage Uploaded. Thanks to [mjanddy](https://github.com/mjanddy)!
 
 ------
 
