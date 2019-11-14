@@ -109,7 +109,7 @@ The following image is used to judge the effectiveness of PRNet to unknown data.
 
 You can use following instruction to do your prnet inference. The detail about parameters you can find in `inference.py`.
 ```shell
-python3 inference -i input_dir(default is TestImages) -o output_dir(default is TestImages/results) --model model_path(default is results/latest.pth)
+python3 inference.py -i input_dir(default is TestImages) -o output_dir(default is TestImages/results) --model model_path(default is results/latest.pth)
 ```
 ![Test Data](docs/image/inference_img.png)
 
