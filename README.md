@@ -23,7 +23,7 @@ of [`300WLP`](http://www.cbsr.ia.ac.cn/users/xiangyuzhu/projects/3DDFA/main.htm)
 
 **@date**: 2019.11.14
 
-**@notice**: Inference Stage Uploaded. Thanks to [mjanddy](https://github.com/mjanddy)!
+**@notice**: Inference Stage Uploaded, pretrain model available in `results/latest.pth`. Thanks to [mjanddy](https://github.com/mjanddy)!
 
 ------
 
