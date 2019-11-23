@@ -93,7 +93,9 @@ class ToTensor(object):
         origin = origin.transpose((2, 0, 1))
 
         uv_map = uv_map.astype("float32") / 255.
+        uv_map = np.clip(uv_map, 0, 1)
         origin = origin.astype("float32") / 255.
+        
         return {'uv_map': torch.from_numpy(uv_map), 'origin': torch.from_numpy(origin)}
 
 
